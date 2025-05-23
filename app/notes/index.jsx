@@ -16,6 +16,7 @@ const NoteScreen = () => {
         fetchNotes()
     }, [])
 
+    // fetch all notes
     const fetchNotes = async () => {
         setLoading(true)
         const response = await noteService.getNotes()
@@ -46,6 +47,23 @@ const NoteScreen = () => {
         setModalVisible(false)
     }
 
+    // edit a note
+    const editNote = async (id, newText) => {
+        if (!newText.trim()) {
+            Alert.alert('Error', 'Note text cannot be empty')
+            return
+        }
+
+        const response = await noteService.updateNote(id, newText)
+
+        if (response.error) {
+            Alert.alert('Error', response.error)
+        } else {
+            setNotes((prev) => prev.map((note) => note.$id === id ?
+                { ...note, text: response.data.text } : note))
+        }
+    }
+
     // delete a note
     const deleteNote = async (id) => {
         Alert.alert('Delete Note', 'Confirm delete?',
@@ -57,7 +75,7 @@ const NoteScreen = () => {
                 text: 'Delete', style: 'destructive',
                 onPress: async () => {
                     const response = await noteService.deleteNote(id)
-                    if(response.error) {
+                    if (response.error) {
                         Alert.alert('Error', response.error)
                     } else {
                         setNotes(notes.filter((note) => note.$id !== id))
@@ -73,7 +91,7 @@ const NoteScreen = () => {
             ) : (
                 <>
                     {error && <Text style={styles.errorText}>{error}</Text>}
-                    <NoteList notes={notes} onDelete={deleteNote} />
+                    <NoteList notes={notes} onDelete={deleteNote} onEdit={editNote} />
                 </>
             )
             }
