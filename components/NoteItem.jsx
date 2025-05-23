@@ -1,9 +1,13 @@
-import { StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { MaterialIcons } from '@expo/vector-icons'
 
-const NoteItem = ({ note }) => {
+const NoteItem = ({ note, onDelete }) => {
     return (
         <View style={styles.noteItem}>
             <Text style={styles.noteText}>{note.text}</Text>
+            <TouchableOpacity onPress={() => onDelete(note.$id)}>
+                <MaterialIcons name="delete" size={24} color="#ff3333" />
+            </TouchableOpacity>
         </View>
     )
 }

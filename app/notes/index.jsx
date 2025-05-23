@@ -19,16 +19,16 @@ const NoteScreen = () => {
     const fetchNotes = async () => {
         setLoading(true)
         const response = await noteService.getNotes()
-        if(response.error) {
+        if (response.error) {
             setError(response.error)
-            Alert.alert('Error: ', response.error)
+            Alert.alert('Error', response.error)
         } else {
             setNotes(response.data)
             setError(null)
         }
 
         setLoading(false)
-    } 
+    }
 
     // add new note
     const addNote = async () => {
@@ -36,8 +36,8 @@ const NoteScreen = () => {
 
         const response = await noteService.addNote(newNote)
 
-        if(response.error) {
-            Alert.alert('Error: ', response.error)
+        if (response.error) {
+            Alert.alert('Error', response.error)
         } else {
             setNotes([...notes, response.data])
         }
@@ -46,14 +46,34 @@ const NoteScreen = () => {
         setModalVisible(false)
     }
 
+    // delete a note
+    const deleteNote = async (id) => {
+        Alert.alert('Delete Note', 'Confirm delete?',
+            [{
+                text: 'Cancel',
+                style: 'cancel'
+            },
+            {
+                text: 'Delete', style: 'destructive',
+                onPress: async () => {
+                    const response = await noteService.deleteNote(id)
+                    if(response.error) {
+                        Alert.alert('Error', response.error)
+                    } else {
+                        setNotes(notes.filter((note) => note.$id !== id))
+                    }
+                }
+            }])
+    }
+
     return (
         <View style={styles.container}>
             {loading ? (
                 <ActivityIndicator size='large' color='#007bff' />
             ) : (
                 <>
-                { error && <Text style={styles.errorText}>{ error }</Text> }
-                <NoteList notes={notes} />
+                    {error && <Text style={styles.errorText}>{error}</Text>}
+                    <NoteList notes={notes} onDelete={deleteNote} />
                 </>
             )
             }

@@ -1,4 +1,4 @@
-import {database} from './appwrite'
+import { database } from './appwrite'
 
 const databaseService = {
     // List Documents
@@ -18,7 +18,18 @@ const databaseService = {
             return await database.createDocument(dbId, colId, id || undefined, data)
         } catch (error) {
             console.error('Error creating document', error.message)
-            return { error: error.message}
+            return { error: error.message }
+        }
+    },
+
+    // Delete Document
+    async deleteDocument(dbId, colId, id) {
+        try {
+            await database.deleteDocument(dbId, colId, id)
+            return { success: true }
+        } catch (error) {
+            console.error('Error deleting document', error.message)
+            return { error: error.message }
         }
     }
 }
